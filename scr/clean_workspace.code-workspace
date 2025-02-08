@@ -1,0 +1,17 @@
+{
+    "folders": [
+        {
+            "path": "../src"
+        },
+        {
+            "path": "../data"
+        },
+        {
+            "path": "../web_site"
+        },
+        {
+            "name": "ai_4_wk",
+            "path": ".."
+        }
+    ]
+}

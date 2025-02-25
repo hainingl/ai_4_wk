@@ -1,3 +1,15 @@
 tmp.*
 *.code-workspace
 scr/
+bin/
+lib/
+node_modules/
+dist/
+.vscode/
+.idea/
+*.log
+*.log.*
+*.log-*
+*.log/*
+*.log/*
+data/*

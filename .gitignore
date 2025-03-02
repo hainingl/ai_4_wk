@@ -12,4 +12,5 @@ dist/
 *.log-*
 *.log/*
 *.log/*
+share/*
 data/*

@@ -1,0 +1,9 @@
+# requirements.txt
+pandas
+matplotlib
+yfinance
+transformers
+torch
+requests
+tabulate
+nbformat

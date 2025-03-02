@@ -13,5 +13,19 @@
             "name": "ai_4_wk",
             "path": ".."
         }
-    ]
+    ],
+
+    "jupyter.notebookFileRoot": ".",
+    "jupyter.interactiveWindowMode": "perFile",
+    "jupyter.sendSelectionToInteractiveWindow": true,
+    "jupyter.askForKernelRestart": false,
+    "jupyter.enableCellCodeLens": true,
+    "jupyter.showCellToolbar": "hover",
+    "jupyter.widgetScriptSources": [
+        "jsdelivr.com",
+        "unpkg.com"
+    ],
+    "settings": {
+            "jupyter.notebookFileRoot": "."
+    }
 }

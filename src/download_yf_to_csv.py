@@ -1,12 +1,12 @@
 import yfinance as yf
 import os
 
-def download_stock_data(ticker: str, start_date: str, end_date: str, file_dir: str = "../data") -> 'pandas.DataFrame':
+def download_stock_data(ticker: str, start_date: str, end_date: str) -> 'pandas.DataFrame':
     # Fetch historical market data
     stock_data = yf.download(ticker, start=start_date, end=end_date)
 
     # Define file path
-    file_path = os.path.join(file_dir, f"{ticker}_data.csv")
+    file_path = os.path.join("../data", f"{ticker}_data.csv")
 
     # Write data to CSV file
     stock_data.to_csv(file_path)
@@ -24,4 +24,3 @@ if __name__ == "__main__":
     ticker = input("Enter stock ticker: ")
 
     download_stock_data(ticker, "2023-01-01", "2025-12-31")
-

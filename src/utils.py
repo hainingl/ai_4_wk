@@ -18,19 +18,53 @@ CHART_CHINA_ONE_DAY_TEMPLATE = 'https://j4.dfcfw.com/charts/pic6/{symbol}.png?v=
 CHART_US_TEMPLATE = 'https://stockcharts.com/c-sc/sc?s={symbol}&p=D&b=5&i=t4273131773c'
 
 # TradingView URLs
-CHART_TRADING_VIEW_TEMPLATE = 'https://cn.tradingview.com/chart/DWv74HO8/?symbol={symbol}'
+CHART_TRADING_VIEW_TEMPLATE = 'https://cn.tradingview.com/chart/T3FsDPIK/?symbol={symbol}'
 LAYOUT_HOUR_DAY = 'https://cn.tradingview.com/chart/mGKyRfcA/?symbol={symbol}'
-LAYOUT_MIN_HOUR = 'https://cn.tradingview.com/chart/ezkzlG7W/?symbol={symbol}'
+# LAYOUT_MIN_HOUR = 'https://cn.tradingview.com/chart/ezkzlG7W/?symbol={symbol}'
 
 CN_FUND_SCREEN = 'https://cn.tradingview.com/chart/0cdJ1j31/?symbol={symbol}'
 
 # make it parameterized
 DAILY_BUYING_SCREEN_TEMPLATE='https://cn.tradingview.com/chart/ezkzlG7W/?symbol={symbol}'
 
-SCREEN_TEMPLATE ='https://cn.tradingview.com/chart/{layout}/?symbol={symbol}&interval={interval}'
+SCREEN_TEMPLATE ='https://cn.tradingview.com/chart/T3FsDPIK/?symbol={symbol}&interval={interval}'
+SYMBOL_INTERVAL_SCREEN_TEMPLATE ='https://cn.tradingview.com/chart/SWCnHzWx/?symbol={symbol}&interval={interval}'
 
 import pprint
 
+from typing import List
+
+LAYOUTS = {
+    "Multi": {
+        "1H_1D": "https://cn.tradingview.com/chart/gcIkMrqM/",
+        "Daily_Buying": "https://cn.tradingview.com/chart/ezkzlG7W/",
+    },
+    "One": {
+        "多-中ETF-30m": "https://cn.tradingview.com/chart/OzpPEC1I/",
+        "Fixed_start_one_screen": "https://cn.tradingview.com/chart/DWv74HO8/",
+    }
+}
+# create function to print out value by name on the bottom level
+def get_layout_by_name(layouts: dict = LAYOUTS, name: str = None, multi: bool = True) -> List[str]:
+    values = []
+    if name is None:
+        if multi:
+            for k, v in layouts['Multi'].items():
+                # print(f"{k}: {v}")
+                values.append(v)
+        else:
+            for k, v in layouts['One'].items():
+                # print(f"{k}: {v}")
+                values.append(v)
+    else:
+        for k, v in layouts.items():
+            if isinstance(v, dict):
+                values.extend(get_layout_by_name(v, name, multi))
+            else:
+                if name in k:
+                    # print(f"{k}: {v}")
+                    values.append(v)
+    return values
 
 def create_top_trending_stocks_dict(top_trending_stocks):
     return {
@@ -48,6 +82,19 @@ def display_charts_from_dict(stock_dict):
         url = SCREEN_TEMPLATE.format(layout=value['layout'], symbol=symbol, interval=value['interval'])
         display_chart_in_browser([symbol], url)
 
+import webbrowser
+
+def show_stock_by_algo(stock, layout_name="1H_1D"):
+    algos = get_layout_by_name(LAYOUTS, layout_name)
+    # create loops over algos
+    for algo in algos:
+        url = algo + '?symbol=' + stock
+        try:
+            browser = webbrowser.get('TV_STOCKS')
+        except webbrowser.Error:
+            browser = webbrowser.get()
+        browser.open(url)
+        
 def display_chart_in_browser(symbols: List[str], url_template: str = CHART_US_TEMPLATE) -> None:
     """
     Displays URLs for stock symbols in a web browser.
@@ -76,7 +123,6 @@ def display_chart_in_browser(symbols: List[str], url_template: str = CHART_US_TE
             print(f"Failed to open URL for symbol {symbol} in 'TV_STOCKS' browser: {e}")
         except Exception as e:
             print(f"An unexpected error occurred for symbol {symbol}: {e}")
-# display_chart_in_browser(['AAPL'])
 
 def get_top_trending_stocks(num_stocks: int = 5) -> list:
     # find current path and print it
@@ -162,3 +208,26 @@ def plot_top_trending_stocks(stock_symbols: List[str]) -> None:
         else:
             print(f"Skipping {symbol} as it does not contain 'Date' or 'Close' column")
 
+from typing import List
+from IPython.display import display, HTML
+
+def display_tradingview_iframes(symbols: List[str], interval: str = '10') -> None:
+    """
+    Display TradingView iframes for a list of symbols in a table format.
+
+    Parameters:
+    symbols (List[str]): List of stock symbols to display.
+    interval (str): Time interval for the TradingView chart. Default is '10'.
+    """
+    iframe_template = """
+    <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_{symbol}&symbol={symbol}&interval={interval}&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[%22MACD@tv-basicstudies%22]&theme=Light&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={{}}&overrides={{}}&enabled_features=[]&disabled_features=[]&locale=en&utm_source=tradingview.com&utm_medium=widget_new&utm_campaign=symbol-overview" width="700" height="400" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+    """
+    
+    rows = []
+    for i in range(0, len(symbols), 2):
+        row_symbols = symbols[i:i+2]
+        row_iframes = "".join([iframe_template.format(symbol=symbol, interval=interval) for symbol in row_symbols])
+        rows.append(f"<tr>{row_iframes}</tr>")
+    
+    table_html = f"<table>{''.join(rows)}</table>"
+    display(HTML(table_html))

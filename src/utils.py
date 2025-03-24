@@ -25,7 +25,7 @@ LAYOUT_HOUR_DAY = 'https://cn.tradingview.com/chart/mGKyRfcA/?symbol={symbol}'
 CN_FUND_SCREEN = 'https://cn.tradingview.com/chart/0cdJ1j31/?symbol={symbol}'
 
 # make it parameterized
-DAILY_BUYING_SCREEN_TEMPLATE='https://cn.tradingview.com/chart/ezkzlG7W/?symbol={symbol}'
+DAILY_BUYING_SCREEN_TEMPLATE='https://cn.tradingview.com/chart/ezkzlG7W/?symbol={symbol}&theme=light'
 
 SCREEN_TEMPLATE ='https://cn.tradingview.com/chart/T3FsDPIK/?symbol={symbol}&interval={interval}'
 SYMBOL_INTERVAL_SCREEN_TEMPLATE ='https://cn.tradingview.com/chart/SWCnHzWx/?symbol={symbol}&interval={interval}'
@@ -76,10 +76,10 @@ def create_top_trending_stocks_dict(top_trending_stocks):
     }
 
 
-def display_charts_from_dict(stock_dict):
+def display_charts_from_dict(stock_dict, layout: str = SCREEN_TEMPLATE):
     for key, value in stock_dict.items():
         symbol = value['symbol']
-        url = SCREEN_TEMPLATE.format(layout=value['layout'], symbol=symbol, interval=value['interval'])
+        url = layout.format(layout=value['layout'], symbol=symbol, interval=value['interval'])
         display_chart_in_browser([symbol], url)
 
 import webbrowser
@@ -220,7 +220,7 @@ def display_tradingview_iframes(symbols: List[str], interval: str = '10') -> Non
     interval (str): Time interval for the TradingView chart. Default is '10'.
     """
     iframe_template = """
-    <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_{symbol}&symbol={symbol}&interval={interval}&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[%22MACD@tv-basicstudies%22]&theme=Light&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={{}}&overrides={{}}&enabled_features=[]&disabled_features=[]&locale=en&utm_source=tradingview.com&utm_medium=widget_new&utm_campaign=symbol-overview" width="700" height="400" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+    <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_{symbol}&symbol={symbol}&interval={interval}&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[%22MACD@tv-basicstudies%22,%22RSI@tv-basicstudies%22]&theme=Light&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={{}}&overrides={{}}&enabled_features=[]&disabled_features=[]&locale=en&utm_source=tradingview.com&utm_medium=widget_new&utm_campaign=symbol-overview" width="700" height="400" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
     """
     
     rows = []
